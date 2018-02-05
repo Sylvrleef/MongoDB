@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cheerio = require("cheerio");
 const request = require("request")
-// const db = require("./models");
+const db = require("./models");
 
 const PORT = 3000;
 
@@ -38,9 +38,8 @@ app.get("/scrape", function(req, res) {
         link: link
       });
     });
+    console.log(results);
   });
-
-console.log(results);
 });
 
 app.get("/articles", function(req, res) {
