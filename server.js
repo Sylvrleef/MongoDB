@@ -3,7 +3,6 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const cheerio = require("cheerio");
 const request = require("request");
-const mongojs = require("mongojs");
 const db = require("./models");
 
 const PORT = 3000;
@@ -11,9 +10,6 @@ const PORT = 3000;
 const app = express();
 
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
-
-var databaseUrl = "scraper";
-var collections = ["scrapedData"];
 
 app.use(bodyParser.urlencoded({
   extended: false
@@ -24,42 +20,43 @@ app.use(express.static("public"));
 mongoose.Promise = Promise;
 mongoose.connect(MONGODB_URI);
 
-var dbmongo = mongojs(databaseUrl, collections);
-dbmongo.on("error", function(error) {
-  console.log("Database Error:", error);
-});
-
 app.get("/scrape", function(req, res) {
 
-  request("https://www.reddit.com/", function(error, response, html) {
+    // console.log("This is the Article: ", db.Article);
+
+  request("https://www.nytimes.com/", function(error, response, html) {
 
     var $ = cheerio.load(html);
 
-    $(".title").each(function(i, element) {
-      var title = $(element).children("a").text();
-      var link = $(element).children("a").attr("href");
+    $(".story").each(function(i, element) {
+      var title = $(element).children("h2").children("a").text();
+      var byline = $(element).children("p").text();
+      var summary = $(element).children("p").text();
 
-      if (title && link) {
-        dbmongo.Article.insert({
-          title: title,
-          link: link
-        },
-        function(err, inserted) {
-          if (err) {
-            console.log(err);
-          }
-          else {
-            console.log(inserted);
-          }
-        });
-      }
+      console.log(title);
+
+      // if (title && link) {
+      //   db.Article.create({
+      //     title: title,
+      //     description: 
+      //     link: link
+      //   },
+      //   function(err, inserted) {
+      //     if (err) {
+      //       console.log(err);
+      //     }
+      //     else {
+      //       console.log(inserted);
+      //     }
+      //   });
+      // }
     });
   });
   res.send("Scrape Complete");
 });
 
 app.get("/articles", function(req, res) {
-  dbmongo.Article.find({}, function(error, found) {
+  db.Article.find({}, function(error, found) {
     if (error) {
       console.log(error);
     }
