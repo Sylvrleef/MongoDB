@@ -22,8 +22,6 @@ mongoose.connect(MONGODB_URI);
 
 app.get("/scrape", function(req, res) {
 
-    // console.log("This is the Article: ", db.Article);
-
   request("https://www.nytimes.com/", function(error, response, html) {
 
     var $ = cheerio.load(html);
@@ -35,21 +33,21 @@ app.get("/scrape", function(req, res) {
 
       console.log(title);
 
-      // if (title && link) {
-      //   db.Article.create({
-      //     title: title,
-      //     description: 
-      //     link: link
-      //   },
-      //   function(err, inserted) {
-      //     if (err) {
-      //       console.log(err);
-      //     }
-      //     else {
-      //       console.log(inserted);
-      //     }
-      //   });
-      // }
+      if (title && byline && summary) {
+        db.Article.create({
+          title: title,
+          byline: byline, 
+          summary: summary
+        },
+        function(err, inserted) {
+          if (err) {
+            console.log(err);
+          }
+          else {
+            console.log(inserted);
+          }
+        });
+      }
     });
   });
   res.send("Scrape Complete");

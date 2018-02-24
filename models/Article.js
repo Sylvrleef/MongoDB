@@ -7,7 +7,7 @@ var ArticleSchema = new Schema({
     type: String,
     required: true
   },
-  link: {
+  byline: {
     type: String,
     required: true
   },
