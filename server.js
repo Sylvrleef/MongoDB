@@ -5,7 +5,7 @@ const cheerio = require("cheerio");
 const request = require("request");
 const db = require("./models");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const app = express();
 
@@ -29,15 +29,13 @@ app.get("/scrape", function(req, res) {
     $(".story").each(function(i, element) {
       var title = $(element).children("h2").children("a").text();
       var byline = $(element).children("p").text();
-      var summary = $(element).children("p").text();
 
       console.log(title);
 
       if (title && byline && summary) {
         db.Article.create({
           title: title,
-          byline: byline, 
-          summary: summary
+          byline: byline
         },
         function(err, inserted) {
           if (err) {
