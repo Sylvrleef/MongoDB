@@ -32,7 +32,7 @@ app.get("/scrape", function(req, res) {
 
       console.log(title);
 
-      if (title && byline && summary) {
+      if (title && byline) {
         db.Article.create({
           title: title,
           byline: byline
